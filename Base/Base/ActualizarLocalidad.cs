@@ -95,7 +95,7 @@ namespace Base
                 using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    string updateQuery = $"UPDATE DatosDeLocalidades SET [{columnName}] = @NewValue WHERE id = @CellID";
+                    string updateQuery = $"UPDATE DatosDeLocalidades SET [{columnName}] = @NewValue WHERE ID = @CellID";
                     SqlCommand command = new SqlCommand(updateQuery, connection);
                     //command.Parameters.AddWithValue("@NewValue", newValue);
 
@@ -119,15 +119,15 @@ namespace Base
             }
         }
 
-
-        private void InsertChangeRecord(int cellID, int columna, int userID, DateTime changeDate, string comment, string valorCelda)
+        int idTablaModificada = 1;
+        private void InsertChangeRecord(int cellID, int columna, int userID, DateTime changeDate, string comment, string valorCelda, int tabla)
         {
             var conString = ConfigurationManager.ConnectionStrings["dbSql"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(conString))
             {
                 connection.Open();
-                string insertQuery = "INSERT INTO Cambios (idCell, Columna, ValorCelda, Usuario, Fecha, Comentario) " +
-                    "VALUES (@CellID, @Columna, @ValorCelda, @Userid, @ChangeDate, @Comment)";
+                string insertQuery = "INSERT INTO Cambios (idCell, Columna, ValorCelda, Usuario, Fecha, Comentario, Id_Tabla) " +
+                    "VALUES (@CellID, @Columna, @ValorCelda, @Userid, @ChangeDate, @Comment, @idTabla)";
                 SqlCommand command = new SqlCommand(insertQuery, connection);
                 command.Parameters.AddWithValue("@CellID", cellID);
                 command.Parameters.AddWithValue("@Columna", columna);
@@ -143,6 +143,7 @@ namespace Base
                 command.Parameters.AddWithValue("@Userid", userID);
                 command.Parameters.AddWithValue("@ChangeDate", changeDate);
                 command.Parameters.AddWithValue("@Comment", comment);
+                command.Parameters.AddWithValue("@idTabla", tabla);
                 command.ExecuteNonQuery();
             }
         }
@@ -196,7 +197,7 @@ namespace Base
                     int columna = e.ColumnIndex;
 
                     // actualizo para ingresar el valor de celda
-                    InsertChangeRecord(cellID, columna, user.ID, changeDate, comment, nuevoValor);
+                    InsertChangeRecord(cellID, columna, user.ID, changeDate, comment, nuevoValor, idTablaModificada);
 
                     // Actualiza la cuadrícula con el nuevo valor
                     //dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = nuevoValor;

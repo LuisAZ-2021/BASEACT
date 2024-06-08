@@ -30,17 +30,10 @@ namespace Base.Utilidades
                     // Actualizamoc la tabla TOTAL USUARIOS
                     string updateQueryTUS = $"UPDATE DatosIndirectos " +
                     $"SET[TOTAL USUARIOS] = (" +
-                    $"SELECT " +
-                    $"(" +
-                    $"ISNULL(NULLIF(I.[USUARIOS AGUA],0),0) + ISNULL(NULLIF(I.[USUARIOS CLOACA],0),0) + ISNULL(NULLIF(I.[USUARIOS AG Y CL],0),0) " +
-                    $") " +
-                    $"FROM DatosDeLocalidades D " +
-                    $"INNER JOIN dbo.DatosLocalidades_DatosServicio SL ON D.ID = SL.ID_DatosLocalidades " +
-                    $"INNER JOIN dbo.DatosServicio S ON SL.ID_DatosServicio = S.ID " +
-                    $"INNER JOIN dbo.DatosLocalidades_DatosIndirectos DI ON D.ID = DI.ID_DatosLocalidades " +
-                    $"INNER JOIN DatosIndirectos I ON DI.ID_DatosIndirectos = I.ID " +
-                    $"WHERE DI.ID_DatosIndirectos = DatosIndirectos.ID" +
-                    $")";
+                    $"    ISNULL([USUARIOS AGUA], 0) +  " +
+                    $"    ISNULL([USUARIOS CLOACA], 0) + " +
+                    $"    ISNULL([USUARIOS AG Y CL], 0) " +
+                    $"); ";
 
                     // Actualizamoc la tabla % Cobertura por Conexion (Agua)]
                     string updateQueryCPC = $"UPDATE DatosIndirectos " +

@@ -29,7 +29,7 @@ namespace Base
                     conector.Open();
 
 
-                    string query = "SELECT Id, Nombre, Password, Rol FROM dbo.Usuario WHERE Nombre = @usuario AND Password = @pas";
+                    string query = "SELECT ID, Nombre, Password, ID_Rol FROM dbo.Usuario WHERE Nombre = @usuario AND Password = @pas";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     cmd.Parameters.AddWithValue("usuario", usuarioIngresado);
                     cmd.Parameters.AddWithValue("pas", passIngresada);

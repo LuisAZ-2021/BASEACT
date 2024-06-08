@@ -29,7 +29,7 @@ namespace Base
                 {
                     conector.Open();
                     DataTable dt = new DataTable();
-                    string query = @"SELECT l.Id, l.Nombre, l.Password, p.Rol FROM Usuario l JOIN Rol p ON l.Rol = p.id";
+                    string query = @"SELECT l.ID, l.Nombre, l.Password, p.Rol FROM Usuario l JOIN Rol p ON l.ID_Rol = p.ID";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     da.SelectCommand = cmd;

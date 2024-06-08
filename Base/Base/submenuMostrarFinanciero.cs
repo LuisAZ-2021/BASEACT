@@ -37,16 +37,14 @@ namespace Base
                     conector.Open();
                     DataTable dt = new DataTable();
 
-                    string query = @"SELECT Fi.ID, L.LOCALIDADES, Fi.[CLOACA (CON CONEXION - SERVICIO NO MEDIDO)], 
-                    Fi.[AGUA (CON CONEXION - SERVICIO NO MEDIDO)], Fi.[AG Y CL (CON CONEXION - SERVICIO NO MEDIDO)], 
-                    Fi.[CLOACA (SIN CONEXION - SERVICIO NO MEDIDO)], Fi.[AGUA (SIN CONEXION - SERVICIO NO MEDIDO)],
-                    Fi.[AG Y CL (SIN CONEXION - SERVICIO NO MEDIDO)], Fi.[TOTAL TASA BASICA], 
-                    Fi.[AGUA (SERVICIO MEDIDO)], 
-                    Fi.[AGUA Y CLOACA (SERVICIO MEDIDO)], Fi.[TOTAL SERVICIO MEDIDO], 
-                    Fi.[TOTAL GENERAL facturado] ,Fi.[TOTAL NO facturado]
-                    FROM DatosFinancieros Fi
-                    INNER JOIN DatosLocalidades_DatosFinancieros FL ON Fi.ID = FL.ID_DatosFinancieros
-                    INNER JOIN DatosDeLocalidades L ON L.ID = FL.ID_DatosLocalidades
+                    string query = @"SELECT Fi.ID, L.LOCALIDADES, Fi.[CLOACA (CON CONEXION - SERVICIO NO MEDIDO)], Fi.[AGUA (CON CONEXION - SERVICIO NO MEDIDO)], 
+		            Fi.[AG Y CL (CON CONEXION - SERVICIO NO MEDIDO)], Fi.[CLOACA (SIN CONEXION - SERVICIO NO MEDIDO)],
+		            Fi.[AGUA (SIN CONEXION - SERVICIO NO MEDIDO)], Fi.[AG Y CL (SIN CONEXION - SERVICIO NO MEDIDO)],
+		            Fi.[TOTAL TASA BASICA], Fi.[AGUA (SERVICIO MEDIDO)],
+		            Fi.[AGUA Y CLOACA (SERVICIO MEDIDO)], Fi.[TOTAL SERVICIO MEDIDO],
+		            Fi.[TOTAL GENERAL FACTURADOS], Fi.[TOTAL NO FACTURADOS]
+                    from DatosFinancieros Fi
+                    inner join DatosDeLocalidades L ON Fi.ID_LOCALIDAD=L.ID
                     ";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -127,7 +125,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el nombre de usuario del cambio
-                string query = "SELECT u.Nombre FROM Cambios_DatosFinancieros l inner join Usuario u " +
+                string query = "SELECT u.Nombre FROM Cambios l inner join Usuario u " +
                     "on u.Id = l.Usuario " +
                     "WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
@@ -165,7 +163,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la fecha del cambio
-                string query = "SELECT Fecha FROM Cambios_DatosFinancieros WHERE idCell = @CellID " +
+                string query = "SELECT Fecha FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -199,7 +197,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el comentario del cambio
-                string query = "SELECT Comentario FROM Cambios_DatosFinancieros WHERE idCell = @CellID " +
+                string query = "SELECT Comentario FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -233,7 +231,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la columna modificada
-                string query = "SELECT Columna FROM Cambios_DatosFinancieros WHERE idCell = @CellID " +
+                string query = "SELECT Columna FROM Cambios WHERE idCell = @CellID " +
                     "AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))

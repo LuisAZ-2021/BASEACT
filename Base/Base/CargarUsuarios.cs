@@ -36,7 +36,7 @@ namespace Base
                 using (SqlConnection conector = new SqlConnection(conString))
                 {
                     conector.Open();
-                    string query = "SELECT id, Rol FROM Rol";
+                    string query = "SELECT ID, Rol FROM Rol";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -45,7 +45,7 @@ namespace Base
 
                     while (reader.Read())
                     {
-                        int rolId = (int)reader["id"];
+                        int rolId = (int)reader["ID"];
                         string rolNombre = reader["Rol"].ToString();
                         // Crea un objeto RolItem y agrégalo a la lista.
                         RolItem rol = new RolItem(rolId, rolNombre);
@@ -93,12 +93,12 @@ namespace Base
                     if (esEdicion)
                     {
                         // Si es una edición, actualizar el usuario existente
-                        query = "UPDATE Usuario SET Nombre=@nombre, Password=@password, Rol=@rol WHERE Id=@userId";
+                        query = "UPDATE Usuario SET Nombre=@nombre, Password=@password, ID_Rol=@rol WHERE ID=@userId";
                     }
                     else
                     {
                         // Si es una creación, insertar un nuevo usuario
-                        query = "INSERT INTO Usuario(Nombre, Password, Rol) VALUES(@nombre, @password, @rol)";
+                        query = "INSERT INTO Usuario(Nombre, Password, ID_Rol) VALUES(@nombre, @password, @rol)";
                     }
 
                     SqlCommand cmd = new SqlCommand(query, conector);
@@ -199,7 +199,7 @@ namespace Base
                 {
                     conector.Open();
                     DataTable dt = new DataTable();
-                    string query = @"SELECT l.Id, l.Nombre, l.Password, p.Rol FROM Usuario l JOIN Rol p ON l.Rol = p.id";
+                    string query = @"SELECT l.ID, l.Nombre, l.Password, p.Rol FROM Usuario l JOIN Rol p ON l.ID_Rol = p.ID";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     da.SelectCommand = cmd;
@@ -228,7 +228,7 @@ namespace Base
 
 
                     string query = "DELETE FROM dbo.Usuario " +
-                        "WHERE Id=@id";
+                        "WHERE ID=@id";
 
                     SqlCommand cmd = new SqlCommand(query, conector);
 

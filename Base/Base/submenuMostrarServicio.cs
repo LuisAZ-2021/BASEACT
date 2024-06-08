@@ -41,18 +41,14 @@ namespace Base
                     conector.Open();
                     DataTable dt = new DataTable();
 
-                    string query = @"SELECT S.ID, L.LOCALIDADES, S.[TIPO DE SERVICIO], S.[VOLUMEN DISTRIBUIDOS m3/D], 
-                    S.[HS DE SERV], S.[FACTURA SI/NO], S.[DOTACION ACTIVA],
-		            S.[CLOACA (CON CONEXION - SERVICIO NO MEDIDO)], S.[AGUA (CON CONEXION - SERVICIO NO MEDIDO)], 
-                    S.[AG Y CL (CON CONEXION - SERVICIO NO MEDIDO)],
-		            S.[CLOACA (SIN CONEXION - radio servido)], S.[AGUA (SIN CONEXION - radio servido)], 
-                    S.[AG Y CL (SIN CONEXION - radio servido)],
-		            S.[TOTAL TASA BASICA], S.[AGUA (SERVICIO MEDIDO - medidores)], 
-                    S.[AGUA Y CLOACA (SERVICIO MEDIDO - medidores)], S.[TOTAL SERVICIO MEDIDO],
-		            S.[TOTAL CLIENTES NO FACTURADOS], S.[TOTAL CLIENTES FACTURADOS]
-                    FROM DatosServicio S
-                    INNER JOIN DatosLocalidades_DatosServicio DS ON DS.ID_DatosServicio = S.ID
-                    INNER JOIN DatosDeLocalidades L ON DS.ID_DatosLocalidades = L.ID";
+                    string query = @"select S.ID, L.LOCALIDADES, S.[TIPO DE SERVICIO], S.[VOLUMEN DISTRIBUIDOS m3/D], S.[HS DE SERV],
+		                            S.[FACTURA SI/NO], S.[DOTACION ACTIVA], S.[AGUA (CON CONEXION - SERVICIO NO MEDIDO)], S.[CLOACA (CON CONEXION - SERVICIO NO MEDIDO)], 
+		                            S.[AG Y CL (CON CONEXION - SERVICIO NO MEDIDO)], S.[AGUA (SIN CONEXION - radio servido)], S.[CLOACA (SIN CONEXION - radio servido)],
+		                            S.[AG Y CL (SIN CONEXION - radio servido)], S.[TOTAL TASA BASICA], S.[AGUA (SERVICIO MEDIDO - medidores)],
+		                            S.[AGUA Y CLOACA (SERVICIO MEDIDO - medidores)], S.[TOTAL SERVICIO MEDIDO],
+		                            S.[TOTAL CLIENTES NO FACTURADOS], S.[TOTAL CLIENTES FACTURADOS]
+                                    from DatosServicio S
+                                    inner join DatosDeLocalidades L ON S.ID_LOCALIDAD=L.ID";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     da.SelectCommand = cmd;
@@ -330,7 +326,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el nombre de usuario del cambio
-                string query = "SELECT u.Nombre FROM Cambios_DatosServicio l inner join Usuario u " +
+                string query = "SELECT u.Nombre FROM Cambios l inner join Usuario u " +
                     "on u.Id = l.Usuario " +
                     "WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
@@ -368,7 +364,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la fecha del cambio
-                string query = "SELECT Fecha FROM Cambios_DatosServicio WHERE idCell = @CellID " +
+                string query = "SELECT Fecha FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -402,7 +398,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el comentario del cambio
-                string query = "SELECT Comentario FROM Cambios_DatosServicio WHERE idCell = @CellID " +
+                string query = "SELECT Comentario FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -436,7 +432,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la columna modificada
-                string query = "SELECT Columna FROM Cambios_DatosServicio WHERE idCell = @CellID " +
+                string query = "SELECT Columna FROM Cambios WHERE idCell = @CellID " +
                     "AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))

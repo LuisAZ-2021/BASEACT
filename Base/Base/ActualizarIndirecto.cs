@@ -42,14 +42,12 @@ namespace Base
                     conector.Open();
                     DataTable dt = new DataTable();
 
-                    string query = @"SELECT I.ID, L.LOCALIDADES, I.[USUARIOS AGUA], I.[USUARIOS CLOACA], I.[USUARIOS AG Y CL], 
-                    I.[TOTAL USUARIOS], I.[% COBERTURA POR CONEXION (AGUA)],
-                    I.[% COBERTURA POR CONEXION (CLOACA)], I.[% COBERTURA POR CONEXION (AyC)],
-                    I.[% COBERTURA POR USUARIO (AGUA)], I.[% COBERTURA POR USUARIO (CLOACA)], I.[% COBERTURA POR USUARIO (AyC)], I.[% MICROMEDICION],
-                    I.[% RECAUDACION], I.[% de empleados x 1000conex]
+                    string query = @"SELECT I.ID, L.LOCALIDADES, I.[USUARIOS AGUA], I.[USUARIOS CLOACA], I.[USUARIOS AG Y CL],
+                    I.[TOTAL USUARIOS], I.[% COBERTURA POR CONEXION (AGUA)], I.[% COBERTURA POR CONEXION (CLOACA)],
+                    I.[% COBERTURA POR USUARIO (AyC)], I.[% COBERTURA POR USUARIO (AGUA)], I.[% COBERTURA POR USUARIO (CLOACA)],
+                    I.[% COBERTURA POR USUARIO (AyC)], I.[% MICROMEDICION], I.[% RECAUDACION], I.[% de empleados x 1000conex]
                     FROM DatosIndirectos I
-                    INNER JOIN DatosLocalidades_DatosIndirectos DI ON I.ID = DI.ID_DatosIndirectos
-                    INNER JOIN DatosDeLocalidades L ON L.ID = DI.ID_DatosLocalidades;
+                    INNER JOIN DatosDeLocalidades L ON I.ID_LOCALIDAD=L.ID
                     ";
                     SqlCommand cmd = new SqlCommand(query, conector);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -133,7 +131,7 @@ namespace Base
                 using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    string updateQuery = $"UPDATE DatosIndirectos SET [{columnName}] = @NewValue WHERE id = @CellID";
+                    string updateQuery = $"UPDATE DatosIndirectos SET [{columnName}] = @NewValue WHERE ID = @CellID";
                     //Agregamos la tabla para la suma de las columnas anteriores
                     //string updateQueryTTB = $"UPDATE DatosServicio SET [TOTAL TASA BASICA] = " +
                      //   $"ISNULL([AGUA (CON CONEXION - SERVICIO NO MEDIDO)],0) + ISNULL([CLOACA (CON CONEXION - SERVICIO NO MEDIDO)],0) +" +
@@ -175,15 +173,15 @@ namespace Base
                 MessageBox.Show("No hay celda seleccionada");
             }
         }
-
-        private void InsertChangeRecord(int cellID, int columna, int userID, DateTime changeDate, string comment, string valorCelda)
+        int idTablaModificada = 5;
+        private void InsertChangeRecord(int cellID, int columna, int userID, DateTime changeDate, string comment, string valorCelda, int tabla)
         {
             var conString = ConfigurationManager.ConnectionStrings["dbSql"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(conString))
             {
                 connection.Open();
-                string insertQuery = "INSERT INTO Cambios_DatosIndirectos (idCell, Columna, ValorCelda, Usuario, Fecha, Comentario) " +
-                    "VALUES (@CellID, @Columna, @ValorCelda, @Userid, @ChangeDate, @Comment)";
+                string insertQuery = "INSERT INTO Cambios (idCell, Columna, ValorCelda, Usuario, Fecha, Comentario, Id_Tabla) " +
+                    "VALUES (@CellID, @Columna, @ValorCelda, @Userid, @ChangeDate, @Comment, @tabla)";
                 SqlCommand command = new SqlCommand(insertQuery, connection);
                 command.Parameters.AddWithValue("@CellID", cellID);
                 command.Parameters.AddWithValue("@Columna", columna);
@@ -199,6 +197,7 @@ namespace Base
                 command.Parameters.AddWithValue("@Userid", userID);
                 command.Parameters.AddWithValue("@ChangeDate", changeDate);
                 command.Parameters.AddWithValue("@Comment", comment);
+                command.Parameters.AddWithValue("@tabla", tabla);
                 command.ExecuteNonQuery();
             }
         }
@@ -254,7 +253,7 @@ namespace Base
                     int columna = e.ColumnIndex;
 
                     // actualizo para ingresar el valor de celda
-                    InsertChangeRecord(cellID, columna, user.ID, changeDate, comment, nuevoValor);
+                    InsertChangeRecord(cellID, columna, user.ID, changeDate, comment, nuevoValor, idTablaModificada);
 
                     // Actualiza la cuadrícula con el nuevo valor
                     //dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = nuevoValor;
@@ -310,7 +309,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el nombre de usuario del cambio
-                string query = "SELECT u.Nombre FROM Cambios_DatosIndirectos l inner join Usuario u " +
+                string query = "SELECT u.Nombre FROM Cambios l inner join Usuario u " +
                     "on u.Id = l.Usuario " +
                     "WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
@@ -348,7 +347,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la fecha del cambio
-                string query = "SELECT Fecha FROM Cambios_DatosIndirectos WHERE idCell = @CellID " +
+                string query = "SELECT Fecha FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -382,7 +381,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener el comentario del cambio
-                string query = "SELECT Comentario FROM Cambios_DatosIndirectos WHERE idCell = @CellID " +
+                string query = "SELECT Comentario FROM Cambios WHERE idCell = @CellID " +
                     "AND Columna = @Columna AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
@@ -416,7 +415,7 @@ namespace Base
                 connection.Open();
 
                 // Consulta SQL para obtener la columna modificada
-                string query = "SELECT Columna FROM Cambios_DatosIndirectos WHERE idCell = @CellID " +
+                string query = "SELECT Columna FROM Cambios WHERE idCell = @CellID " +
                     "AND ValorCelda = @ValorCelda";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
